@@ -2,11 +2,29 @@
 
 var gulp = require('gulp');
 var server = require('gulp-express');
+var eslint = require('gulp-eslint'); //Lint JS files, including JSX
 
-gulp.task('server', function () {
-    // Start the server at the beginning of the task
-    server.run(['src/app.js']);
-    gulp.watch(['src/**/*.js'], server.run);
+var config = {
+    paths: {
+        js: './src/**/*.js',
+        mainJs: './src/app.js'
+    }
+};
+
+//Start a local development server
+gulp.task('server', function() {
+    server.run([config.paths.mainJs]);
 });
 
-gulp.task('default', ['server']);
+//Check js
+gulp.task('lint', function() {
+    return gulp.src(config.paths.js)
+        .pipe(eslint({config: 'eslint.config.json'}))
+        .pipe(eslint.format());
+});
+
+gulp.task('watch', function() {
+    gulp.watch(config.paths.js, ['lint', 'server']);
+});
+
+gulp.task('default', ['lint', 'server', 'watch']);
