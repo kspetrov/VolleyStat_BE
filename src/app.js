@@ -17,9 +17,9 @@ var game = require('./api_v1/game.js');
 app.get('/api/v1/games', game.getGames); //выборка игр по команде (параметр в запросе)
 app.get('/api/v1/game/:id', game.getGameById); //выборка игры по Id
 
- var player = require('./api_v1/player.js');
- app.get('/api/v1/players', player.getPlayers); //выборка игроков по команде (параметр в запросе)
- app.get('/api/v1/player/:id', player.getPlayerById); //выборка игрока по Id
+var player = require('./api_v1/player.js');
+app.get('/api/v1/players', player.getPlayers); //выборка игроков по команде (параметр в запросе)
+app.get('/api/v1/player/:id', player.getPlayerById); //выборка игрока по Id
 app.get('/api/v1/lineup', player.getLineUp); //выборка игроков основы по сету(параметры в запросе)
 
 var set = require('./api_v1/set.js');
