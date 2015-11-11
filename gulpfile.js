@@ -3,6 +3,7 @@
 var gulp = require('gulp');
 var server = require('gulp-express');
 var eslint = require('gulp-eslint'); //Lint JS files, including JSX
+var apidoc = require('gulp-apidoc'); //Для сборки документации по АПИ
 
 var config = {
     paths: {
@@ -24,7 +25,16 @@ gulp.task('lint', function() {
 });
 
 gulp.task('watch', function() {
-    gulp.watch(config.paths.js, ['lint', 'server']);
+    gulp.watch(config.paths.js, ['lint', 'server', 'apidoc']);
 });
 
-gulp.task('default', ['lint', 'server', 'watch']);
+//Create docs
+gulp.task('apidoc', function(done){
+          apidoc({
+            src: "src/",
+            dest: "doc/",
+            markdown: true
+          },done);
+});
+
+gulp.task('default', ['lint', 'server', 'watch', 'apidoc']);

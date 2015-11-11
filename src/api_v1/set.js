@@ -21,6 +21,10 @@ module.exports = {
       return res.status(400).json({error: 'need game param'});
     }
 
+    if (isNaN(req.query.game)) {
+      return res.status(400).json({error: 'game param must be a number'});
+    }
+
     //Connect to DB
     var db = pgp(config.conString);
 

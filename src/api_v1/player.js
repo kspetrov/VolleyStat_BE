@@ -21,6 +21,10 @@ module.exports = {
       return res.status(400).json({error: 'need team param'});
     }
 
+    if (isNaN(req.query.team)) {
+      return res.status(400).json({error: 'team param must be a number'});
+    }
+
     //Connect to DB
     var db = pgp(config.conString);
 
@@ -60,6 +64,10 @@ module.exports = {
 
     if (!req.query.set) {
       return res.status(400).json({error: 'need set param'});
+    }
+
+    if (isNaN(req.query.set)) {
+      return res.status(400).json({error: 'set param must be a number'});
     }
 
     //Connect to DB
