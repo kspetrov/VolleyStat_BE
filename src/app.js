@@ -1,6 +1,8 @@
 "use strict";
 
 var express = require('express');
+var path = require('path');
+var serve_static = require('serve-static');
 
 var app = express();
 app.use(require('connect-livereload')());
@@ -8,6 +10,9 @@ app.use(require('connect-livereload')());
 var config = {
     port: 3000
 };
+
+//вывод хелпа по корневому пути
+app.use(serve_static(path.join(process.cwd(), 'doc/')));
 
 var team = require('./api_v1/team.js');
 /**
