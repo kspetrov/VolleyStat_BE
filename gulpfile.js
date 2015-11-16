@@ -8,7 +8,10 @@ var apidoc = require('gulp-apidoc'); //Для сборки документац�
 var config = {
   paths: {
     js: './src/**/*.js',
-    mainJs: './src/app.js'
+    dist: './dist',
+    mainJs: './dist/app.js',
+    src: "src",
+    destDoc: "dist/doc"
   }
 };
 var server = gls.new(config.paths.mainJs);
@@ -18,6 +21,12 @@ gulp.task('server', function() {
   server.start();
 });
 
+//copy to dist
+gulp.task('copy', function() {
+    gulp.src(config.paths.js)
+        .pipe(gulp.dest(config.paths.dist));
+});
+
 //Check js
 gulp.task('lint', function() {
   return gulp.src(config.paths.js)
@@ -25,8 +34,9 @@ gulp.task('lint', function() {
     .pipe(eslint.format());
 });
 
+//check when edit
 gulp.task('watch', function() {
-  gulp.watch(config.paths.js, ['lint', 'apidoc', function() {
+  gulp.watch(config.paths.js, ['lint', 'apidoc', 'copy', function() {
     server.start.bind(server)() //restart my server
   }]);
 });
@@ -34,9 +44,9 @@ gulp.task('watch', function() {
 //Create docs
 gulp.task('apidoc', function(done){
   apidoc({
-    src: "src/",
-    dest: "doc/"
+    src: config.paths.src,
+    dest: config.paths.destDoc
   },done);
 });
 
-gulp.task('default', ['lint', 'apidoc', 'server', 'watch']);
+gulp.task('default', ['lint', 'apidoc', 'copy', 'server', 'watch']);

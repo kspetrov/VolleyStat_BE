@@ -2,9 +2,9 @@
   "name": "volleystat_be",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "dist/app.js"
   },
   "repository": {
     "type": "git",
@@ -17,18 +17,19 @@
   },
   "homepage": "https://github.com/kspetrov/VolleyStat_BE#readme",
   "devDependencies": {
-    "bluebird": "^3.0.5",
-    "connect-livereload": "^0.5.3",
     "eslint-config-defaults": "^7.1.1",
-    "express": "^4.13.3",
     "gulp": "^3.9.0",
     "gulp-apidoc": "^0.2.0",
     "gulp-eslint": "^1.0.0",
-    "gulp-live-server": "0.0.29",
+    "gulp-live-server": "0.0.29"
+  },
+  "dependencies": {
+    "bluebird": "^3.0.5",
+    "connect-livereload": "^0.5.3",
+    "express": "^4.13.3",
     "pg-promise": "^2.2.5",
     "serve-static": "^1.10.0"
   },
-  "dependencies": {},
   "apidoc": {
     "title": "VolleyStat_ REST_API",
     "name": "VolleyStat_ REST_API",
