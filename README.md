@@ -12,3 +12,6 @@ https://devcenter.heroku.com/articles/dynos
 
 https://devcenter.heroku.com/articles/getting-started-with-nodejs#introduction
 
+Натравить git репозиторий на нет в админке Heroku отметить, что используется для деплоя git репозиторий.
+
+Добавить файл Procfile с указаниес, что там веб и команду для выполнения (запуска) приложения. Для теста на девелопе - это скрипт start.
