@@ -2,15 +2,7 @@
 
 //API v1 для работы с играми
 
-var promise = require('bluebird'); // or any other Promise/A+ compatible library;
-var options = {
-    promiseLib: promise // overriding the default (ES6 Promise);
-};
-var pgp = require('pg-promise')(options);
-
-var config = {
-    conString: 'postgres://dccfcrnj:o10inFoPNTlE2qJYpvL080hi3Olj-b6q@pellefant.db.elephantsql.com:5432/dccfcrnj'
-};
+var dbHelper = require('./db.js');
 
 module.exports = {
 
@@ -26,7 +18,7 @@ module.exports = {
     }
 
     //Connect to DB
-    var db = pgp(config.conString);
+    var db = dbHelper.getDb();
 
     db.query('select id, name, "setWe", "setThey", "isEnd" from game where team = $1', req.query.team)
       .then(function (games) {
@@ -36,7 +28,7 @@ module.exports = {
         return res.status(503).json({error: error.toString()});
       })
       .finally(function () {
-        pgp.end();
+        dbHelper.closeDb();
       });
   },
 
@@ -44,7 +36,7 @@ module.exports = {
   getGameById: function (req, res) {
 
     //Connect to DB
-    var db = pgp(config.conString);
+    var db = dbHelper.getDb();
 
     db.query('select game.id, game.name, game.team as "teamId", team.name as "teamName", game."setWe", game."setThey", game."isEnd" ' +
               'from game, team where team.id = game.team and game.id = $1', req.params.id)
@@ -65,7 +57,7 @@ module.exports = {
         return res.status(503).json({error: error.toString()});
       })
       .finally(function () {
-        pgp.end();
+        dbHelper.closeDb();
       });
   }
 }

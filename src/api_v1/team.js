@@ -2,15 +2,7 @@
 
 //API v1 для работы с командами
 
-var promise = require('bluebird'); // or any other Promise/A+ compatible library;
-var options = {
-    promiseLib: promise // overriding the default (ES6 Promise);
-};
-var pgp = require('pg-promise')(options);
-
-var config = {
-    conString: 'postgres://dccfcrnj:o10inFoPNTlE2qJYpvL080hi3Olj-b6q@pellefant.db.elephantsql.com:5432/dccfcrnj'
-};
+var dbHelper = require('./db.js');
 
 module.exports = {
 
@@ -18,7 +10,7 @@ module.exports = {
   getTeams: function (req, res) {
 
     //Connect to DB
-    var db = pgp(config.conString);
+    var db = dbHelper.getDb();
 
     db.query('select * from team')
       .then(function (teams) {
@@ -28,7 +20,7 @@ module.exports = {
         return res.status(503).json({error: error.toString()});
       })
       .finally(function () {
-        pgp.end();
+        dbHelper.closeDb();
       });
   },
 
@@ -36,7 +28,7 @@ module.exports = {
   getTeamById: function (req, res) {
 
     //Connect to DB
-    var db = pgp(config.conString);
+    var db = dbHelper.getDb();
 
     db.query('select * from team where id = $1', req.params.id)
       .then(function (team) {
@@ -63,7 +55,7 @@ module.exports = {
         return res.status(503).json({error: error.toString()});
       })
       .finally(function () {
-        pgp.end();
+        dbHelper.closeDb();
       });
   }
 }

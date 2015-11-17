@@ -1,16 +1,6 @@
 "use strict";
 
-//API v1 для работы с сетами
-
-var promise = require('bluebird'); // or any other Promise/A+ compatible library;
-var options = {
-    promiseLib: promise // overriding the default (ES6 Promise);
-};
-var pgp = require('pg-promise')(options);
-
-var config = {
-    conString: 'postgres://dccfcrnj:o10inFoPNTlE2qJYpvL080hi3Olj-b6q@pellefant.db.elephantsql.com:5432/dccfcrnj'
-};
+var dbHelper = require('./db.js');
 
 module.exports = {
 
@@ -26,7 +16,7 @@ module.exports = {
     }
 
     //Connect to DB
-    var db = pgp(config.conString);
+    var db = dbHelper.getDb();
 
     db.query('select id, "setNum", "startRotation", "startServe", "isEnd" from set where game = $1', req.query.game)
       .then(function (sets) {
@@ -36,7 +26,7 @@ module.exports = {
         return res.status(503).json({error: error.toString()});
       })
       .finally(function () {
-        pgp.end();
+        dbHelper.closeDb();
       });
   },
 
@@ -44,7 +34,7 @@ module.exports = {
   getSetById: function (req, res) {
 
     //Connect to DB
-    var db = pgp(config.conString);
+    var db = dbHelper.getDb();
 
     db.query('select set.id, set."setNum", set."startRotation", set."startServe", set."isEnd", set.game as "gameId", game.name as "gameName", team.id as "teamId", team.name as "teamName" ' +
               'from set, game, team where set.game = game.id and game.team = team.id and set.id = $1', req.params.id)
@@ -65,7 +55,7 @@ module.exports = {
         return res.status(503).json({error: error.toString()});
       })
       .finally(function () {
-        pgp.end();
+        dbHelper.closeDb();
       });
   }
 }

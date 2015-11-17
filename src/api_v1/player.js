@@ -2,15 +2,7 @@
 
 //API v1 для работы с игроками
 
-var promise = require('bluebird'); // or any other Promise/A+ compatible library;
-var options = {
-    promiseLib: promise // overriding the default (ES6 Promise);
-};
-var pgp = require('pg-promise')(options);
-
-var config = {
-    conString: 'postgres://dccfcrnj:o10inFoPNTlE2qJYpvL080hi3Olj-b6q@pellefant.db.elephantsql.com:5432/dccfcrnj'
-};
+var dbHelper = require('./db.js');
 
 module.exports = {
 
@@ -26,7 +18,7 @@ module.exports = {
     }
 
     //Connect to DB
-    var db = pgp(config.conString);
+    var db = dbHelper.getDb();
 
     db.query('select id, num, name from player where team = $1', req.query.team)
       .then(function (games) {
@@ -36,7 +28,7 @@ module.exports = {
         return res.status(503).json({error: error.toString()});
       })
       .finally(function () {
-        pgp.end();
+        dbHelper.closeDb();
       });
   },
 
@@ -44,7 +36,7 @@ module.exports = {
   getPlayerById: function (req, res) {
 
     //Connect to DB
-    var db = pgp(config.conString);
+    var db = dbHelper.getDb();
 
     db.query('select player.id, player.name, player.num, player.team as "teamId", team.name as "teamName" ' +
               'from player, team where team.id = player.team and player.id = $1', req.params.id)
@@ -55,7 +47,7 @@ module.exports = {
         return res.status(503).json({error: error.toString()});
       })
       .finally(function () {
-        pgp.end();
+        dbHelper.closeDb();
       });
   },
 
@@ -71,7 +63,7 @@ module.exports = {
     }
 
     //Connect to DB
-    var db = pgp(config.conString);
+    var db = dbHelper.getDb();
 
     if (req.query.notMain !== undefined) {
       db.query('select player.id, player.name, player.num from lineup, player where lineup.player = player.id and lineup."isMain" = FALSE and lineup.set = $1', req.query.set)
@@ -82,7 +74,7 @@ module.exports = {
           return res.status(503).json({error: error.toString()});
         })
         .finally(function () {
-          pgp.end();
+          dbHelper.closeDb();
         });
     }
     else {
@@ -94,7 +86,7 @@ module.exports = {
           return res.status(503).json({error: error.toString()});
         })
         .finally(function () {
-          pgp.end();
+          dbHelper.closeDb();
         });
     }
   }
