@@ -21,7 +21,8 @@
     "gulp": "^3.9.0",
     "gulp-apidoc": "^0.2.0",
     "gulp-eslint": "^1.0.0",
-    "gulp-live-server": "0.0.29"
+    "gulp-live-server": "0.0.29",
+    "vinyl-source-stream": "^1.1.0"
   },
   "dependencies": {
     "bluebird": "^3.0.5",

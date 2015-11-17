@@ -4,6 +4,7 @@ var gulp = require('gulp');
 var gls = require('gulp-live-server');
 var eslint = require('gulp-eslint'); //Lint JS files, including JSX
 var apidoc = require('gulp-apidoc'); //Для сборки документации по АПИ
+var source = require('vinyl-source-stream'); //For create Procfile
 
 var config = {
   paths: {
@@ -22,11 +23,18 @@ gulp.task('server', function() {
 });
 
 //copy to dist
-gulp.task('copy', function() {
-    gulp.src(config.paths.js)
-        .pipe(gulp.dest(config.paths.dist));
-	gulp.src('package.json')
-        .pipe(gulp.dest(config.paths.dist));
+gulp.task('copy', ['procfile'], function() {
+  gulp.src(config.paths.js)
+    .pipe(gulp.dest(config.paths.dist));
+  gulp.src('package.json')
+    .pipe(gulp.dest(config.paths.dist));
+});
+
+//Create Procfile for heroku
+gulp.task('procfile', function() {
+  var stream = source('Procfile');
+  stream.end('web: node app.js');
+  stream.pipe(gulp.dest(config.paths.dist));
 });
 
 //Check js
