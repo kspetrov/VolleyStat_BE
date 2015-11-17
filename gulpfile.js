@@ -10,8 +10,8 @@ var config = {
     js: './src/**/*.js',
     dist: './dist',
     mainJs: './dist/app.js',
-    src: "src",
-    destDoc: "dist/doc"
+    src: './src',
+    destDoc: './dist/doc'
   }
 };
 var server = gls.new(config.paths.mainJs);
@@ -24,6 +24,8 @@ gulp.task('server', function() {
 //copy to dist
 gulp.task('copy', function() {
     gulp.src(config.paths.js)
+        .pipe(gulp.dest(config.paths.dist));
+	gulp.src('package.json')
         .pipe(gulp.dest(config.paths.dist));
 });
 

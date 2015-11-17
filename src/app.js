@@ -12,7 +12,7 @@ var config = {
 };
 
 //вывод хелпа по корневому пути
-app.use(serve_static(path.join(process.cwd(), 'doc/')));
+app.use(serve_static(path.join(path.dirname(require.main.filename), 'doc/')));
 
 var team = require('./api_v1/team.js');
 /**
@@ -352,7 +352,7 @@ var stat = require('./api_v1/stat.js');
 app.get('/api/v1/stat', stat.getStat); //выборка статистики по сету (параметр в запросе)
 
 
-var server = app.listen(config.port, function () {
+var server = app.listen((process.env.PORT || config.port), function () {
 
   var host = server.address().address;
   var port = server.address().port;
