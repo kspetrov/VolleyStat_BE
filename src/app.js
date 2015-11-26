@@ -351,6 +351,8 @@ var stat = require('./api_v1/stat.js');
  */
 app.get('/api/v1/stat', stat.getStat); //выборка статистики по сету (параметр в запросе)
 
+app.post('/api/v1/team', team.addTeams);
+
 
 var server = app.listen((process.env.PORT || config.port), function () {
 

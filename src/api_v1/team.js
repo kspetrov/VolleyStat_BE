@@ -57,5 +57,31 @@ module.exports = {
       .finally(function () {
         dbHelper.closeDb();
       });
+  },
+  
+  addTeams: function (req, res) {
+
+    //Connect to DB
+    var db = dbHelper.getDb();
+
+	db.tx(function (t) {
+		// t = this;
+		var arr = [
+			this.query('insert into team(id, name) values($1, $2)', [3, 'name-3']),
+			this.query('insert into team(id, name) values($1, $2)', [4, 'name-4'])
+		];
+		return this.batch(arr);
+	})
+      .then(function (team) {
+		  console.log(team);
+        return res.json({error: null});
+      })
+      .catch(function (error) {
+		console.log(error);
+        return res.status(503).json({error: error.toString()});
+      })
+      .finally(function () {
+        dbHelper.closeDb();
+      });
   }
 }
