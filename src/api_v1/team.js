@@ -58,7 +58,7 @@ module.exports = {
         dbHelper.closeDb();
       });
   },
-  
+
   addTeams: function (req, res) {
 
     //Connect to DB

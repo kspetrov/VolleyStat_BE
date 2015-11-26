@@ -1,6 +1,7 @@
 "use strict";
 
 var gulp = require('gulp');
+var del = require('del');
 var gls = require('gulp-live-server');
 var eslint = require('gulp-eslint'); //Lint JS files, including JSX
 var apidoc = require('gulp-apidoc'); //Для сборки документации по АПИ
@@ -17,46 +18,49 @@ var config = {
 };
 var server = gls.new(config.paths.mainJs);
 
-//Start a local development server
-gulp.task('server', function() {
-  server.start();
+gulp.task('clean', function() {
+  return del([config.paths.dist + '/*', '!' + config.paths.dist + '/.git']);
 });
 
-//copy to dist
-gulp.task('copy', ['procfile'], function() {
+//Check js
+gulp.task('lint', function() {
   gulp.src(config.paths.js)
-    .pipe(gulp.dest(config.paths.dist));
-  gulp.src('package.json')
-    .pipe(gulp.dest(config.paths.dist));
+    .pipe(eslint({config: 'eslint.config.json'}))
+    .pipe(eslint.format());
 });
 
 //Create Procfile for heroku
-gulp.task('procfile', function() {
+gulp.task('procfile', ['clean'], function() {
   var stream = source('Procfile');
   stream.end('web: node app.js');
   stream.pipe(gulp.dest(config.paths.dist));
 });
 
-//Check js
-gulp.task('lint', function() {
-  return gulp.src(config.paths.js)
-    .pipe(eslint({config: 'eslint.config.json'}))
-    .pipe(eslint.format());
-});
-
-//check when edit
-gulp.task('watch', function() {
-  gulp.watch(config.paths.js, ['lint', 'apidoc', 'copy', function() {
-    server.start.bind(server)() //restart my server
-  }]);
-});
-
 //Create docs
-gulp.task('apidoc', function(done){
+gulp.task('apidoc', ['clean'], function(done){
   apidoc({
     src: config.paths.src,
     dest: config.paths.destDoc
   },done);
 });
 
-gulp.task('default', ['lint', 'apidoc', 'copy', 'server', 'watch']);
+//copy to dist
+gulp.task('copy', ['clean', 'lint', 'procfile', 'apidoc'], function() {
+  return gulp.src([config.paths.js, 'package.json'])
+    .pipe(gulp.dest(config.paths.dist));
+});
+
+//Start a local development server
+gulp.task('server:restart', ['copy'], function() {
+  server.start.bind(server)();
+});
+
+//check when edit
+gulp.task('watch', function() {
+  gulp.watch(config.paths.js, ['server:restart']);
+});
+
+//Start a local development server
+gulp.task('default', ['copy', 'watch'], function() {
+  server.start();
+});
