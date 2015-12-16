@@ -1,11 +1,17 @@
 "use strict";
 
 var dbHelper = require('./db.js');
+var check = require('./check.js');
 
 module.exports = {
 
   //выборка сетов по игре (параметр в запросе)
   getSets: function (req, res) {
+
+    var headerErr = check.checkHeader(req);
+    if (headerErr.error != null) {
+      return res.status(400).json(headerErr);
+    }
 
     if (!req.query.game ) {
       return res.status(400).json({error: 'need game param'});
@@ -33,6 +39,11 @@ module.exports = {
   //выборка сета по Id
   getSetById: function (req, res) {
 
+    var headerErr = check.checkHeader(req);
+    if (headerErr.error != null) {
+      return res.status(400).json(headerErr);
+    }
+
     //Connect to DB
     var db = dbHelper.getDb();
 
@@ -41,7 +52,7 @@ module.exports = {
       .then(function (set) {
         return set[0];
       })
-      .then(function (set) {
+      .then(function (set) { // add lineUp
         return db.query('select player.id, player.name, player.num from lineup, player where lineup.player = player.id and lineup."isMain" = TRUE and lineup.set = $1', set.id)
                   .then(function (players) {
                     set.lineUp = players;

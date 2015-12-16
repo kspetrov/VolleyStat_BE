@@ -3,11 +3,17 @@
 //API v1 для работы с играми
 
 var dbHelper = require('./db.js');
+var check = require('./check.js');
 
 module.exports = {
 
   //выборка игр по команде (параметр в запросе)
   getGames: function (req, res) {
+
+    var headerErr = check.checkHeader(req);
+    if (headerErr.error != null) {
+      return res.status(400).json(headerErr);
+    }
 
     if (!req.query.team) {
       return res.status(400).json({error: 'need team param'});
@@ -35,6 +41,11 @@ module.exports = {
   //выборка игры по Id
   getGameById: function (req, res) {
 
+    var headerErr = check.checkHeader(req);
+    if (headerErr.error != null) {
+      return res.status(400).json(headerErr);
+    }
+
     //Connect to DB
     var db = dbHelper.getDb();
 
@@ -43,7 +54,7 @@ module.exports = {
       .then(function (game) {
         return game[0];
       })
-      .then(function (game) {
+      .then(function (game) { // add sets
         return db.query('select id, "setNum", "startRotation", "startServe", "isEnd" from set where game = $1', game.id)
                   .then(function (sets) {
                     game.sets = sets;

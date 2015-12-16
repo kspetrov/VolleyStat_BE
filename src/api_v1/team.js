@@ -3,11 +3,17 @@
 //API v1 для работы с командами
 
 var dbHelper = require('./db.js');
+var check = require('./check.js');
 
 module.exports = {
 
   //выборка всех команд
   getTeams: function (req, res) {
+
+    var headerErr = check.checkHeader(req);
+    if (headerErr.error != null) {
+      return res.status(400).json(headerErr);
+    }
 
     //Connect to DB
     var db = dbHelper.getDb();
@@ -27,6 +33,11 @@ module.exports = {
   //выборка команды по Id
   getTeamById: function (req, res) {
 
+    var headerErr = check.checkHeader(req);
+    if (headerErr.error != null) {
+      return res.status(400).json(headerErr);
+    }
+
     //Connect to DB
     var db = dbHelper.getDb();
 
@@ -41,7 +52,7 @@ module.exports = {
                     return team;
                   });
       })
-      .then(function (team) {
+      .then(function (team) { // add players
         return db.query('select id, num, name from player where team = $1', team.id)
                   .then(function (players) {
                     team.players = players;
@@ -52,32 +63,6 @@ module.exports = {
         return res.json(team);
       })
       .catch(function (error) {
-        return res.status(503).json({error: error.toString()});
-      })
-      .finally(function () {
-        dbHelper.closeDb();
-      });
-  },
-
-  addTeams: function (req, res) {
-
-    //Connect to DB
-    var db = dbHelper.getDb();
-
-	db.tx(function (t) {
-		// t = this;
-		var arr = [
-			this.query('insert into team(id, name) values($1, $2)', [3, 'name-3']),
-			this.query('insert into team(id, name) values($1, $2)', [4, 'name-4'])
-		];
-		return this.batch(arr);
-	})
-      .then(function (team) {
-		  console.log(team);
-        return res.json({error: null});
-      })
-      .catch(function (error) {
-		console.log(error);
         return res.status(503).json({error: error.toString()});
       })
       .finally(function () {

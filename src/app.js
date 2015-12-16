@@ -1,10 +1,12 @@
 "use strict";
 
 var express = require('express');
+var bodyParser = require("body-parser");
 var path = require('path');
 var serve_static = require('serve-static');
 
 var app = express();
+app.use(bodyParser.json());
 app.use(require('connect-livereload')());
 
 var config = {
@@ -351,10 +353,86 @@ var stat = require('./api_v1/stat.js');
  */
 app.get('/api/v1/stat', stat.getStat); //выборка статистики по сету (параметр в запросе)
 
-app.post('/api/v1/team', team.addTeams);
+var sync = require('./api_v1/sync.js');
+/**
+ * @api {post} /api/v1/syncbyteam Передача всех данных в рамках команды для записи в БД на сервере
+ * @apiVersion 1.0.0
+ * @apiName SyncDBByTeam
+ * @apiGroup Synchronization
+ *
+ * @apiDescription принимает на вход json объект со всеми данными по команде и записывает его в БД
+ *
+ * @apiParam {Integer}  teamId                       Идентификатор команды.
+ * @apiParam {String}   teamName                     Имя команды.
+ * @apiParam {Object[]} teamPlayers                  Игроки команды (Array of Objects).
+ * @apiParam {Integer}  teamPlayers.id               Идентификатор игрока.
+ * @apiParam {Integer}  teamPlayers.num              Номер игрока.
+ * @apiParam {String}   teamPlayers.name             Имя игрока.
+ * @apiParam {Object[]} teamGames                    Игры команды (Array of Objects).
+ * @apiParam {Integer}  teamGames.id                 Идентификатор игры.
+ * @apiParam {String}   teamGames.name               Имя игры.
+ * @apiParam {Integer}  teamGames.setWe              Количество выигранных сетов нами.
+ * @apiParam {Integer}  teamGames.setThey            Количество выигранных сетов противником.
+ * @apiParam {Boolean}  teamGames.isEnd              Признак окончания игры.
+ * @apiParam {Object[]} teamSets                     Список всех сетов игр (Array of Objects).
+ * @apiParam {Integer}  teamSets.id                  Идентификатор сета.
+ * @apiParam {String}   teamSets.setNum              Номер сета.
+ * @apiParam {Integer}  teamSets.startRotation       Начальная расстановка в сете.
+ * @apiParam {Boolean}  teamSets.startServe          Начальная подача в сете (0-Мы, 1-Противник).
+ * @apiParam {Boolean}  teamSets.isEnd               Признак окончания сета.
+ * @apiParam {Object[]} teamLineUp                   Список основы и запаса по сетам (Array of Objects).
+ * @apiParam {Integer}  teamLineUp.id                Идентификатор игрока.
+ * @apiParam {Integer}  teamLineUp.set               Идентификатор сета.
+ * @apiParam {Boolean}  teamLineUp.isMain            Признак основы или запаса.
+ * @apiParam {Object[]} teamStat                     Список статистики по дейсвтиям игроков (Array of Objects).
+ * @apiParam {Integer}  teamStat.id                  Идентификатор объекта зарегистрированного действия.
+ * @apiParam {Integer}  teamStat.player              Идентификатор игрока.
+ * @apiParam {Integer}  teamStat.action              Идентификатор дейсвтия игрока.
+ * @apiParam {Integer}  teamStat.scoreWe             Очки наши после действия.
+ * @apiParam {Integer}  teamStat.scoreThey           Очки противника после действия.
+ * @apiParam {Integer}  teamStat.rotation            Расстановка после действия.
+ * @apiParam {Boolean}  teamStat.serve               Подача после действия (0-Мы, 1-Противник).
+ * @apiParam {Boolean}  teamStat.inRally             Признак того, что розыгрыш не окончен.
+ *
+ * @apiExample Example usage:
+ * http://localhost:3000/api/v1/syncbyteam
+ * {
+ * "teamId":1,
+ * "teamName": "Россия",
+ * "teamPlayers":[
+ *  {"id": 1, "team": 1, "num": 1, "name": "qwe"},
+ *  {"id": 2, "team": 1, "num": 2, "name": "asd"}
+ * ],
+ * "teamGames":[
+  * {"id": 1, "team": 1, "name": "Сербия", "setWe": 1, "setThey": 1, "isEnd": false},
+  * {"id": 2, "team": 1, "name": "Пербия", "setWe": 1, "setThey": 1, "isEnd": false}
+ * ],
+ * "teamSets":[
+  * {"id": 1, "game": 1, "setNum": 1, "startRotation": 1, "startServe": true, "isEnd": false}
+ * ],
+ * "teamLineUp":[
+  * {"player": 1, "set": 1, "isMain": true},
+  * {"player": 2, "set": 1, "isMain": true}
+ * ],
+ * "teamStat":[
+  * {"id": 1, "set": 1, "player": 1, "action": 12, "scoreWe": 0, "scoreThey": 1, "rotation": 2, "serve": false, "inRally": false},
+  * {"id": 2, "set": 1, "player": 1, "action": 15, "scoreWe": 1, "scoreThey": 1, "rotation": 3, "serve": true, "inRally": false}
+ * ]
+ * }
+ *
+ * @apiError (Error 503) ServiceUnavailable Нет подключения к базе данных или ошибка в запросе к БД.
+ * @apiError (Error 400) BadRequest Не указан требуемый параметр запроса или параметр не того типа двнных.
+ *
+ * @apiSuccessExample {json} Success-Response:
+ *     HTTP/1.1 200 OK
+ *
+ * @apiErrorExample Response (example):
+ *     HTTP/1.1 503 Service Unavailable
+ *     {"error": "Текст ошибки"}
+ */
+app.post('/api/v1/syncbyteam', sync.syncDBByTeam); //Синхронизайия данных по команде (на вход летят JSON данные полные по команде)
 
-
-var server = app.listen((process.env.PORT || config.port), function () {
+var server = app.listen((process.env.PORT || config.port), function () { //стартуем сервак
 
   var host = server.address().address;
   var port = server.address().port;

@@ -3,11 +3,17 @@
 //API v1 для работы с игроками
 
 var dbHelper = require('./db.js');
+var check = require('./check.js');
 
 module.exports = {
 
   //выборка игроков по команде (параметр в запросе)
   getPlayers: function (req, res) {
+
+    var headerErr = check.checkHeader(req);
+    if (headerErr.error != null) {
+      return res.status(400).json(headerErr);
+    }
 
     if (!req.query.team) {
       return res.status(400).json({error: 'need team param'});
@@ -35,6 +41,11 @@ module.exports = {
   //выборка игрока по Id
   getPlayerById: function (req, res) {
 
+    var headerErr = check.checkHeader(req);
+    if (headerErr.error != null) {
+      return res.status(400).json(headerErr);
+    }
+
     //Connect to DB
     var db = dbHelper.getDb();
 
@@ -51,8 +62,13 @@ module.exports = {
       });
   },
 
-  //выборка игроков основы по сету(параметры в запросе)
+  //выборка игроков основы по сету(параметры в запросе - set and notMain)
   getLineUp: function (req, res) {
+
+    var headerErr = check.checkHeader(req);
+    if (headerErr.error != null) {
+      return res.status(400).json(headerErr);
+    }
 
     if (!req.query.set) {
       return res.status(400).json({error: 'need set param'});

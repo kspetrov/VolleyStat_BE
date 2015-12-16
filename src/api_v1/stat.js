@@ -3,11 +3,17 @@
 //API v1 для работы со статистикой
 
 var dbHelper = require('./db.js');
+var check = require('./check.js');
 
 module.exports = {
 
   //выборка статистики по сету (параметр в запросе)
   getStat: function (req, res) {
+
+    var headerErr = check.checkHeader(req);
+    if (headerErr.error != null) {
+      return res.status(400).json(headerErr);
+    }
 
     if (!req.query.set ) {
       return res.status(400).json({error: 'need set param'});

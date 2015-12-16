@@ -27,9 +27,10 @@
   },
   "dependencies": {
     "bluebird": "^3.0.5",
+    "body-parser": "^1.14.1",
     "connect-livereload": "^0.5.3",
     "express": "^4.13.3",
-    "pg-promise": "^2.2.5",
+    "pg-promise": "^2.7.3",
     "serve-static": "^1.10.0"
   },
   "apidoc": {
