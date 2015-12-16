@@ -62,33 +62,41 @@ module.exports = {
 
           var cnt = 7;
 
-          if (index <= cnt + req.body.teamPlayers.length - 1) {
-            return this.query('insert into player(id, team, num, name) values(${id}, ${team}, ${num}, ${name})', req.body.teamPlayers[index - cnt]);
+          if (req.body.teamPlayers != undefined){
+            if (index <= cnt + req.body.teamPlayers.length - 1) {
+              return this.query('insert into player(id, team, num, name) values(${id}, ${team}, ${num}, ${name})', req.body.teamPlayers[index - cnt]);
+            }
+
+            cnt = cnt + req.body.teamPlayers.length;
           }
 
-          cnt = cnt + req.body.teamPlayers.length;
+          if (req.body.teamGames != undefined){
+            if (index <= cnt + req.body.teamGames.length - 1) {
+              return this.query('insert into game(id, team, name, "setWe", "setThey", "isEnd") ' +
+                                'values(${id}, ${team}, ${name}, ${setWe}, ${setThey}, ${isEnd})', req.body.teamGames[index - cnt]);
+            }
 
-          if (index <= cnt + req.body.teamGames.length - 1) {
-            return this.query('insert into game(id, team, name, "setWe", "setThey", "isEnd") ' +
-                              'values(${id}, ${team}, ${name}, ${setWe}, ${setThey}, ${isEnd})', req.body.teamGames[index - cnt]);
+            cnt = cnt + req.body.teamGames.length;
           }
 
-          cnt = cnt + req.body.teamGames.length;
+          if (req.body.teamSets != undefined){
+            if (index <= cnt + req.body.teamSets.length - 1) {
+              return this.query('insert into set(id, game, "setNum", "startRotation", "startServe", "isEnd") ' +
+                                'values(${id}, ${game}, ${setNum}, ${startRotation}, ${startServe}, ${isEnd})', req.body.teamSets[index - cnt]);
+            }
 
-          if (index <= cnt + req.body.teamSets.length - 1) {
-            return this.query('insert into set(id, game, "setNum", "startRotation", "startServe", "isEnd") ' +
-                              'values(${id}, ${game}, ${setNum}, ${startRotation}, ${startServe}, ${isEnd})', req.body.teamSets[index - cnt]);
+            cnt = cnt + req.body.teamSets.length;
           }
 
-          cnt = cnt + req.body.teamSets.length;
+          if (req.body.teamLineUp != undefined){
+            if (index <= cnt + req.body.teamLineUp.length - 1) {
+              return this.query('insert into lineUp(player, set, "isMain") values(${player}, ${set}, ${isMain})', req.body.teamLineUp[index - cnt]);
+            }
 
-          if (index <= cnt + req.body.teamLineUp.length - 1) {
-            return this.query('insert into lineUp(player, set, "isMain") values(${player}, ${set}, ${isMain})', req.body.teamLineUp[index - cnt]);
+            cnt = cnt + req.body.teamLineUp.length;
           }
 
-          cnt = cnt + req.body.teamLineUp.length;
-
-          if (index <= cnt + req.body.teamStat.length - 1) {
+          if (req.body.teamStat != undefined && index <= cnt + req.body.teamStat.length - 1) {
             return this.query('insert into stat(id, set, player, action, "scoreWe", "scoreThey", rotation, serve, "inRally") ' +
                               'values(${id}, ${set}, ${player}, ${action}, ${scoreWe}, ${scoreThey}, ${rotation}, ${serve}, ${inRally})', req.body.teamStat[index - cnt]);
           }
