@@ -3,6 +3,11 @@
 //Коннект к БД и с ним связанное
 
 var promise = require('bluebird'); // or any other Promise/A+ compatible library;
+promise.config({
+  // Disable all warnings.
+  warnings: false
+});
+
 var options = {
   promiseLib: promise // overriding the default (ES6 Promise);
 };

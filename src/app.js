@@ -4,14 +4,11 @@ var express = require('express');
 var bodyParser = require("body-parser");
 var path = require('path');
 var serve_static = require('serve-static');
+var logger = require('./log.js')
 
 var app = express();
 app.use(bodyParser.json());
 app.use(require('connect-livereload')());
-
-var config = {
-    port: 3000
-};
 
 //вывод хелпа по корневому пути
 app.use(serve_static(path.join(path.dirname(require.main.filename), 'doc/')));
@@ -432,11 +429,11 @@ var sync = require('./api_v1/sync.js');
  */
 app.post('/api/v1/syncbyteam', sync.syncDBByTeam); //Синхронизайия данных по команде (на вход летят JSON данные полные по команде)
 
-var server = app.listen((process.env.PORT || config.port), function () { //стартуем сервак
+var server = app.listen((process.env.PORT || 3000), function () { //стартуем сервак
 
   var host = server.address().address;
   var port = server.address().port;
 
-  console.log('Example app listening at http://%s:%s', host, port);
+  logger.info('Example app listening at http://%s:%s', host, port);
 
 })

@@ -31,7 +31,8 @@
     "connect-livereload": "^0.5.3",
     "express": "^4.13.3",
     "pg-promise": "^2.7.3",
-    "serve-static": "^1.10.0"
+    "serve-static": "^1.10.0",
+    "winston": "^2.1.1"
   },
   "apidoc": {
     "title": "VolleyStat_ REST_API",
