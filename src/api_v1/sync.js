@@ -16,7 +16,6 @@ module.exports = {
 
     var headerErr = check.checkHeader(req);
     if (headerErr.error != null) {
-      logger.error("Error when check request header:", JSON.stringify(headerErr));
       return res.status(400).json(headerErr);
     }
 

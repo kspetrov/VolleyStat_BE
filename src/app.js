@@ -4,7 +4,7 @@ var express = require('express');
 var bodyParser = require("body-parser");
 var path = require('path');
 var serve_static = require('serve-static');
-var logger = require('./log.js')
+var logger = require('./log')
 
 var app = express();
 app.use(bodyParser.json());
@@ -13,7 +13,7 @@ app.use(require('connect-livereload')());
 //вывод хелпа по корневому пути
 app.use(serve_static(path.join(path.dirname(require.main.filename), 'doc/')));
 
-var team = require('./api_v1/team.js');
+var team = require('./api_v1/team');
 /**
  * @api {get} /api/v1/teams Получение всех команд
  * @apiVersion 1.0.0
@@ -77,7 +77,7 @@ app.get('/api/v1/teams', team.getTeams); //выборка всех команд
  */
 app.get('/api/v1/team/:id', team.getTeamById); //выборка команды по Id
 
-var game = require('./api_v1/game.js');
+var game = require('./api_v1/game');
 /**
  * @api {get} /api/v1/games Получение игр по команде
  * @apiVersion 1.0.0
@@ -148,7 +148,7 @@ app.get('/api/v1/games', game.getGames); //выборка игр по коман
  */
 app.get('/api/v1/game/:id', game.getGameById); //выборка игры по Id
 
-var player = require('./api_v1/player.js');
+var player = require('./api_v1/player');
 /**
  * @api {get} /api/v1/players Получение игроков по команде
  * @apiVersion 1.0.0
@@ -240,7 +240,7 @@ app.get('/api/v1/player/:id', player.getPlayerById); //выборка игрок
  */
 app.get('/api/v1/lineup', player.getLineUp); //выборка игроков основы по сету(параметры в запросе)
 
-var set = require('./api_v1/set.js');
+var set = require('./api_v1/set');
 /**
  * @api {get} /api/v1/sets Получение сетов по игре
  * @apiVersion 1.0.0
@@ -311,7 +311,7 @@ app.get('/api/v1/sets', set.getSets); //выборка сетов по игре 
  */
 app.get('/api/v1/set/:id', set.getSetById); //выборка сета по Id
 
-var stat = require('./api_v1/stat.js');
+var stat = require('./api_v1/stat');
 /**
  * @api {get} /api/v1/stat Получение статистики по сету
  * @apiVersion 1.0.0
@@ -350,7 +350,7 @@ var stat = require('./api_v1/stat.js');
  */
 app.get('/api/v1/stat', stat.getStat); //выборка статистики по сету (параметр в запросе)
 
-var sync = require('./api_v1/sync.js');
+var sync = require('./api_v1/sync');
 /**
  * @api {post} /api/v1/syncbyteam Передача всех данных в рамках команды для записи в БД на сервере
  * @apiVersion 1.0.0

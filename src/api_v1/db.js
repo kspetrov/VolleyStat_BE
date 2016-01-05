@@ -2,6 +2,8 @@
 
 //Коннект к БД и с ним связанное
 
+var logger = require('../log');
+
 var promise = require('bluebird'); // or any other Promise/A+ compatible library;
 promise.config({
   // Disable all warnings.
@@ -21,9 +23,11 @@ module.exports = {
     return pgp.as.csv(array)
   },
   getDb: function(){
+    logger.info('***Get access to DB!***');
     return pgp('postgres://pidnlbyteuwlfh:5dgGUUWlr-vi_wX9_OJOlld8cP@ec2-54-247-170-228.eu-west-1.compute.amazonaws.com:5432/d5r0j00appbnpg?ssl=true')
   },
   closeDb: function(){
+    logger.info('***Close DB!***');
     pgp.end()
   }
 }
