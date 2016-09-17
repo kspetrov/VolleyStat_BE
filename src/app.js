@@ -7,6 +7,18 @@ var serve_static = require('serve-static');
 var logger = require('./log')
 
 var app = express();
+
+//CORS middleware
+//Разобраться с Access-Control .... их много, понять что к чему. Сейчас выставлено, что похрен откуда запрашивать - ответ будет отдаваться.
+var allowCrossDomain = function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,POST');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+
+    next();
+}
+app.use(allowCrossDomain);
+
 app.use(bodyParser.json());
 app.use(require('connect-livereload')());
 
