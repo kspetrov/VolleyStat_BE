@@ -24,7 +24,7 @@ module.exports = {
   },
   getDb: function(){
     logger.info('***Get access to DB!***');
-    return pgp('postgres://pidnlbyteuwlfh:5dgGUUWlr-vi_wX9_OJOlld8cP@ec2-54-247-170-228.eu-west-1.compute.amazonaws.com:5432/d5r0j00appbnpg?ssl=true')
+    return pgp('postgres://bgbjvcerobzspj:11ef1fd0788fef84d2ac2660ca6507c7cfe72c820a36163cfa6eab665c1c75f1@ec2-54-217-214-201.eu-west-1.compute.amazonaws.com:5432/daechdbff7270c?ssl=true')
   },
   closeDb: function(){
     logger.info('***Close DB!***');
